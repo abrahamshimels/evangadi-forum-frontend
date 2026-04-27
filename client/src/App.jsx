@@ -1,5 +1,5 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
-import axios from "./utiltis/api/api.js";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import axios, { warmUpBackendHealth } from "./utiltis/api/api.js";
 import { useEffect, useState, createContext } from "react";
 import Home from "./pages/Home/Home.jsx";
 import AskQuestions from "./pages/Questions/AskQuestion.jsx";
@@ -21,7 +21,15 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({});
     const navigate = useNavigate();
+    const location = useLocation();
     const token = localStorage.getItem("token");
+
+    useEffect(() => {
+      const warmUpRoutes = ["/", "/login", "/register", "/signup"];
+      if (warmUpRoutes.includes(location.pathname)) {
+        warmUpBackendHealth();
+      }
+    }, [location.pathname]);
 
     async function checkUser() {
        try {
